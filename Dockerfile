@@ -5,22 +5,18 @@ RUN apt-get update && apt-get install -y git libxml2-dev libxslt-dev libcurl4-op
 
 # Define the application working directory inside the image
 ENV APP_ROOT /data
+ENV RACK_ENV development
+
+# Copy the application into place
+COPY . $APP_ROOT
 
 # set the working directory
 WORKDIR $APP_ROOT
-
-# Install bundler
-RUN gem install bundler
-RUN gem install clockwork
-
-# Install all ruby gems
-RUN bundle install
-
-# Copy the application into place
-COPY . /data
-
 # Expose the 'config'-directory as a volume, to be able to tweak things
 VOLUME ["/data/config"]
 
+# Expose Port 5000
+EXPOSE 5000
+
 # start foreman
-CMD [ "foreman start" ]
+CMD [ "/data/docker/entrypoint.sh" ]
