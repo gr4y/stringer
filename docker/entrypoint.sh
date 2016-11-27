@@ -1,5 +1,5 @@
 # Install bundler
-RUN gem install bundler
+gem install bundler
 
 # If the bundle is already was executed, skip this step
 if [! -e ".bundle" ]; then
