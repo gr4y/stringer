@@ -1,22 +1,34 @@
 FROM ruby:2.3-slim
 
-# Install needed Linux packages
-RUN apt-get update && apt-get install -y git libxml2-dev libxslt-dev libcurl4-openssl-dev libpq-dev libsqlite3-dev build-essential postgresql libreadline-dev
-
-# Define the application working directory inside the image
-ENV APP_ROOT /data
+# Set Environment variables
 ENV RACK_ENV development
 
-# Copy the application into place
-COPY . $APP_ROOT
+# Install needed Linux packages
+RUN apt-get update && \
+    apt-get install -y git libxml2-dev libxslt-dev libcurl4-openssl-dev libpq-dev libsqlite3-dev build-essential postgresql libreadline-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# Create Directory
+RUN mkdir /opt/stringer
 
 # set the working directory
-WORKDIR $APP_ROOT
+WORKDIR /opt/stringer
+
+# Install bundler
+RUN gem install bundler
+
+# Copy the application into place
+COPY . /opt/stringer
+
+# Install Ruby Dependencies
+RUN bundle install
+
 # Expose the 'config'-directory as a volume, to be able to tweak things
-VOLUME ["/data/config"]
+VOLUME ["/opt/stringer/config"]
 
 # Expose Port 5000
 EXPOSE 5000
 
-# start foreman
-CMD [ "/data/docker/entrypoint.sh" ]
+# run entrypoint.sh script, which does all the magic
+CMD [ "/opt/stringer/docker/entrypoint.sh" ]
+#CMD ["/bin/ls", "-lha", "/opt/stringer"]
