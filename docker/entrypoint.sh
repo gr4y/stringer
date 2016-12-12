@@ -8,4 +8,4 @@ if [ -e "Procfile" ]; then
   $(which gem) install foreman
 fi
 
-$(which bundle) exec unicorn -p $PORT -c ./config/unicorn.rb
+$(which bundle) exec unicorn -p 5000 -c ./config/unicorn.rb
